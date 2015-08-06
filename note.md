@@ -73,3 +73,139 @@
         * 手続きが引数としてとれる
         * 手続きの返り値になれる
         * データ構造に組み込むことができる
+
+
+2.1 データ抽象入門
+----
+
+* 合成データオブジェクト
+    * より基本的なデータから作られたデータ
+* データ抽象 (data abstraction)
+    * 合成データオブジェクトの使い方を、詳細な作り方から隔離する
+    * プログラムを抽象データオブジェクトの操作で構成するようにする
+    * プログラムを具体的なデータ表現から隔離する
+
+
+2.1.2 抽象の壁
+----
+
+### 抽象の壁 (abstraction barrier)
+
+* システムを異なるレベルで隔離する
+* 上位レベル
+    * データ抽象を使う
+* 下位レベル
+    * データ抽象を実装する
+* データ抽象を使うレベルでの依存を少数のインタフェース手続きに制限することは、プログラムの設計に役立つ
+* 上のレベルを変更せずに、下のレベルを別の実装へ変更する柔軟性を与える
+
+
+2.1.3 データとはなにか
+----
+
+### データ (data)
+
+* 選択子
+* 構成子
+* これらの手続きを有効な表現とするために満たす条件
+
+### メッセージパッシング (message passing)
+
+* 手続きをオブジェクトとして操作する能力が自動的に合成データを表現する
+
+
+2.2 階層データ構造と閉包性
+----
+
+### 箱ポインタ記法 (box-and-pointer notaion)
+
+各オブジェクトを箱（対, `cons`）へのポインタ (pointer) で表す
+
+### 閉包性 (closure property)
+
+* データオブジェクトを合成する演算結果に対して、同様の演算で更に合成ができること
+* 階層的 (hierarchical) 構造を作ることができる
+
+2.2.1 並びの表現
+----
+
+### 並び (sequence)
+
+* データオブジェクトの順序付けられた集まり
+* 入れ子構造の `cons` で作られた並びを リスト (list) と呼ぶ
+
+### nil
+
+* ラテン語の nihil の短縮形
+* 空リスト (empty list) として考える
+
+### リスト演算
+
+* リストを先頭から順に *cdr ダウン* する慣習的な技法
+    * `list-ref`, `length` など
+* cdr ダウンしつつ *cons* アップする
+    * `append` など
+
+### ドット末尾記法
+
+```scheme
+(define (f x y . z) (...))
+```
+
+関数 `f` を `(f 1 2 3 4 5)` と呼び出すと、`z` は `.` 以降の引数のリストになる。
+Python の `*args` みたいなもの。
+
+* `x`: `1`
+* `y`: `2`
+* `z`: `(list 3 4 5)`
+
+### 関数の写像
+
+`map` は、手続きとリストを引数に取り、手続きをリストの各要素に作用させた結果のリストを返す
+
+```scheme
+(define (map proc items)
+  (if (null? items)
+    nil
+    (cons (proc (car items))
+          (map proc (cdr items)))))
+```
+
+`map` は、単に共通パターンを取り込むだけでなく、
+「リストの要素を変換する」「リストの要素を取り出し組み合わせる」というふたつの処理を
+抽象の壁で隔離している。
+
+2.2.3 公認インタフェースとしての並び
+---
+
+### 信号処理構造として考える
+
+1. 数え上げ (enumerator)
+    * 信号を発する
+2. フィルタ (filter)
+    * 要素を除去する
+3. 写像 (map)
+    * 変換器
+4. アキュムレータ (accumulator)
+    * 写像の出力を混合する
+
+#### フィルタ (filter)
+
+```scheme
+(define (filter predicate sequence)
+  (cond ((null? sequence) nil)
+        ((predicate (car sequence))
+         (cons (car sequence)
+               (filter predicate (cdr sequence))))
+        (else (filter predicate (cdr sequence)))))
+```
+
+#### アキュムレータ (accumulator)
+
+```scheme
+(define (accumulate op initial sequence)
+  (if (null? sequence)
+    initial
+    (op (car sequence)
+        (accumulate op initial (cdr sequence)))))
+```
