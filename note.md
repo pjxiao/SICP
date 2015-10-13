@@ -202,10 +202,24 @@ Python の `*args` みたいなもの。
 
 #### アキュムレータ (accumulator)
 
+右畳み込み
+
 ```scheme
 (define (accumulate op initial sequence)
   (if (null? sequence)
     initial
     (op (car sequence)
         (accumulate op initial (cdr sequence)))))
+```
+
+#### 左畳み込み (fold-left)
+
+```scheme
+(define (fold-left op initial sequence)
+  (define (iter result rest)
+    (if (null? rest)
+      result
+      (iter (op result (car rest))
+            (cdr rest))))
+  (iter initial sequence))
 ```

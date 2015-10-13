@@ -113,3 +113,31 @@
 ; 2.37
 (define (dot-product v w)
   (accumulate + 0 (map * v w)))
+
+
+(define (matrix-*-vector m v)
+  (map (lambda (row) (dot-product row v)) m))
+
+(define (transpose mat)
+  (accumulate-n cons nil mat))
+
+(define (matrix-*-matrix m n)
+  (let ((cols (transpose n)))
+    (map (lambda (row) (matrix-*-vector cols row)) m)))
+
+; 2.38
+(define (fold-left op initial sequence)
+  (define (iter result rest)
+    (if (null? rest)
+      result
+      (iter (op result (car rest))
+            (cdr rest))))
+  (iter initial sequence))
+
+(accumulate / 1 (list 1 2 3))
+
+
+; (define (accumulate / 1 (list 1 2 3))
+;   (if (null? (list 1 2 3))
+;     1
+;     (/ 1 (/ 2 (/ 3 1)))))
