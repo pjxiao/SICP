@@ -134,10 +134,10 @@
             (cdr rest))))
   (iter initial sequence))
 
-(accumulate / 1 (list 1 2 3))
 
+; 2.39
+(define (reverse sequence)
+  (fold-right (lambda (x y) (append y (list x))) nil sequence))
 
-; (define (accumulate / 1 (list 1 2 3))
-;   (if (null? (list 1 2 3))
-;     1
-;     (/ 1 (/ 2 (/ 3 1)))))
+(define (reverse sequence)
+    (fold-left (lambda (x y) (cons y x)) nil sequence))
