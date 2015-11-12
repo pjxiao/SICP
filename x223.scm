@@ -1,5 +1,5 @@
-(define nil '())
 
+(define nil '())
 
 (define (sum-odd-squares tree)
   (cond ((null? tree) 0)
@@ -171,7 +171,7 @@
                (flatmap
                  (lambda (i)
                    (map (lambda (j) (list i j))
-                        (enumerate-interval i (- i 1))))
+                        (enumerate-interval 1 (- i 1))))
                (enumerate-interval 1 n)))))
 
 
@@ -187,3 +187,17 @@
                (map (lambda (p) (cons x p))
                     (permutations (remove x s))))
              s)))
+
+(define (unique-pairs n)
+  (flatmap (lambda (i)
+             (map (lambda (j) (list i j))
+                  (enumerate-interval 1 (- i 1))))
+       (enumerate-interval 1 n)))
+
+
+(define (prime-sum-pairs n)
+  (map cadr  (unique-pairs n)))
+(define (prime-sum-pairs n)
+  (map (lambda (x) (prime? (+ (car x) (cadr x)))) (unique-pairs n)))
+
+(display (prime-sum-pairs 6))
