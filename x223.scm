@@ -200,4 +200,18 @@
 (define (prime-sum-pairs n)
   (map (lambda (x) (prime? (+ (car x) (cadr x)))) (unique-pairs n)))
 
-(display (prime-sum-pairs 6))
+
+; 2.24
+(define (ex-2-24 n s)
+  (define (sequence n parent)
+    (if (or (= n 0) (> (length parent) 2))
+        (list parent)
+        (flatmap (lambda (i) (sequence (- i 1) (append parent (list i))))
+                   (enumerate-interval 1 n))))
+
+  (define (sum seq) (accumulate + 0 seq))
+
+  (filter (lambda (t) (= (sum t) s))
+          (filter (lambda (seq) (= (length seq) 3))
+                  (sequence n (list))))
+)
