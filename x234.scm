@@ -107,3 +107,12 @@
       (merge (make-code-tree (car xs) x)
              (cdr xs))))
   (merge (car leaf-set) (cdr leaf-set)))
+
+; 2.70
+
+; fixed bit: 3 * 35 = 105 bit
+; Huffman: 87 bit
+; gosh> (encode
+;   '(GET A JOB SHA NA NA NA NA NA NA NA NA GET A JOB SHA NA NA NA NA NA NA NA NA WAH YIP YIP YIP YIP YIP YIP YIP YIP YIP SHA BOOM)
+;    (generate-huffman-tree '((A    2) (NA  16) (BOOM 1) (SHA  3) (GET  2) (YIP  9) (JOB  2) (WAH  1))))
+; (1 1 1 1 0 1 1 1 0 1 1 1 1 1 0 1 1 0 0 0 0 0 0 0 0 0 1 1 1 1 0 1 1 1 0 1 1 1 1 1 0 1 1 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 1 0 1 1 1 1 1 1 0)
