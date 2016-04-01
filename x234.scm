@@ -57,6 +57,8 @@
         (adjoin-set (make-leaf (car pair)    ; 記号
                                (cadr pair))  ; 頻度
                     (make-leaf-set (cdr pairs))))))
+; gosh> (make-leaf-set '((A 1) (B 2) (C 1) (D 1)))
+; ((leaf D 1) (leaf C 1) (leaf A 1) (leaf B 2))
 
 ; 2.67
 (define sample-tree
@@ -93,3 +95,24 @@
       ((member symbol (symbols right))
        (cons 1 (encode-symbol symbol right)))
       (else (error "bad symbol -- encode-symbol" symbol)))))
+
+; 2.69
+(define (generate-huffman-tree pairs)
+  (successive-merge (make-leaf-set pairs)))
+
+(define (successive-merge leaf-set)
+  (define (merge x xs)
+    (if (null? xs)
+      x
+      (merge (make-code-tree (car xs) x)
+             (cdr xs))))
+  (merge (car leaf-set) (cdr leaf-set)))
+
+; 2.70
+
+; fixed bit: 3 * 35 = 105 bit
+; Huffman: 87 bit
+; gosh> (encode
+;   '(GET A JOB SHA NA NA NA NA NA NA NA NA GET A JOB SHA NA NA NA NA NA NA NA NA WAH YIP YIP YIP YIP YIP YIP YIP YIP YIP SHA BOOM)
+;    (generate-huffman-tree '((A    2) (NA  16) (BOOM 1) (SHA  3) (GET  2) (YIP  9) (JOB  2) (WAH  1))))
+; (1 1 1 1 0 1 1 1 0 1 1 1 1 1 0 1 1 0 0 0 0 0 0 0 0 0 1 1 1 1 0 1 1 1 0 1 1 1 1 1 0 1 1 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 1 0 1 1 1 1 1 1 0)
