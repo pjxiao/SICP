@@ -1,0 +1,3 @@
+[submodule "Gauche-compat-sicp"]
+	path = Gauche-compat-sicp
+	url = git@github.com:shirok/Gauche-compat-sicp.git

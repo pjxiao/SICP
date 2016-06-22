@@ -1,3 +1,8 @@
+(require "./Gauche-compat-sicp/compat/sicp.scm")
+(import compat.sicp)
+(require "./common.scm")
+(import common)
+
 (define (attach-tag type-tag contents)
   (cons type-tag contents))
 
@@ -87,12 +92,17 @@
 
 
 ; 2.73
-(define (accumulate op initial sequence)
-  (if (null? sequence)
-    initial
-    (op (car sequence)
-        (accumulate op initial (cdr sequence)))))
+(define (deriv exp var)
+  (cond ((number? exp) 0)
+        ((variable? exp) (if (same-variable? exp var) 1 0))
+        (else ((get 'deriv (operator exp)) (operands exp)
+                                           var))))
 
+(define (operator exp) (car exp))
+(define (operands exp) (cdr exp))
+
+
+; from 2.3.2
 (define (variable? x) (symbol? x))
 
 (define (same-variable? v1 v2)
@@ -160,13 +170,4 @@
                          (make-exponentiation b (- e 1)))))
         (else
          (error "unknown expression type -- DERIV" exp))))
-
-(define (operator exp) (car exp))
-(define (operands exp) (cdr exp))
-
-(define (deriv exp var)
-  (cond ((number? exp) 0)
-        ((variable? exp)
-         (if (same-variable? exp var) 1 0))
-        (else ((get 'deriv (operator exp)) (operands exp)
-                                           var))))
+; /from 2.3.2
