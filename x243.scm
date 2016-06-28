@@ -1,3 +1,8 @@
+(require "./Gauche-compat-sicp/compat/sicp.scm")
+(import compat.sicp)
+(require "./common.scm")
+(import common)
+
 (define (attach-tag type-tag contents)
   (cons type-tag contents))
 
@@ -84,3 +89,46 @@
 
 (define (make-from-mag-ang r a)
   ((get 'make-from-mag-ang 'polar) r a))
+
+
+; 2.73
+(define (deriv exp var)
+  (cond ((number? exp) 0)
+        ((variable? exp) (if (same-variable? exp var) 1 0))
+        (else ((get 'deriv (operator exp)) (operands exp)
+                                           var))))
+
+(define (operator exp) (car exp))
+(define (operands exp) (cdr exp))
+
+(define (multiplier operands) (car operands))
+(define (multiplicand operands) (accumulate make-product 1 (cdr operands)))
+
+(define (addend s) (car s))
+(define (augend s) (accumulate make-sum 0 (cdr s)))
+
+(define (base x) (car x))
+(define (exponent x) (cdr x))
+
+(put 'deriv
+     '*
+     (lambda (operands var)
+       (make-sum
+         (make-product (multiplier operands)
+                       (deriv (multiplicand operands) var))
+         (make-product (deriv (multiplier operands) var)
+                       (multiplicand operands)))))
+
+(put 'deriv
+     '+
+     (lambda (operands var)
+       (make-sum (deriv (addend operands) var)
+                 (deriv (augend operands) var))))
+
+(put 'deriv
+     '**
+     (lambda (operands var)
+         (let ((e (exponent operands))
+               (b (base operands)))
+           (make-product e
+                         (make-exponentiation b (- e 1))))))
