@@ -102,7 +102,13 @@
 (define (operands exp) (cdr exp))
 
 (define (multiplier operands) (car operands))
-(define (multiplicand operands) (accumulate make-product 1 (cddr operands)))
+(define (multiplicand operands) (accumulate make-product 1 (cdr operands)))
+
+(define (addend s) (car s))
+(define (augend s) (accumulate make-sum 0 (cdr s)))
+
+(define (base x) (car x))
+(define (exponent x) (cdr x))
 
 (put 'deriv
      '*
@@ -112,3 +118,17 @@
                        (deriv (multiplicand operands) var))
          (make-product (deriv (multiplier operands) var)
                        (multiplicand operands)))))
+
+(put 'deriv
+     '+
+     (lambda (operands var)
+       (make-sum (deriv (addend operands) var)
+                 (deriv (augend operands) var))))
+
+(put 'deriv
+     '**
+     (lambda (operands var)
+         (let ((e (exponent operands))
+               (b (base operands)))
+           (make-product e
+                         (make-exponentiation b (- e 1))))))

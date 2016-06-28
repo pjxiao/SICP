@@ -1,5 +1,18 @@
 (define-module common
-  (export square accumulate))
+  (export
+    square
+    accumulate
+    accumulate
+    variable?
+    same-variable?
+    =number?
+    make-sum
+    make-product
+    sum?
+    product?
+    exponentiation?
+    make-exponentiation
+    ))
 (select-module common)
 
 ; square
@@ -37,23 +50,11 @@
 (define (sum? x)
   (and (pair? x) (eq? (car x) '+)))
 
-(define (addend s) (cadr s))
-
-(define (augend s) (accumulate make-sum 0 (cddr s)))
-
 (define (product? x)
   (and (pair? x) (eq? (car x) '*)))
 
-(define (multiplier p) (cadr p))
-
-(define (multiplicand p) (accumulate make-product 1 (cddr p)))
-
 (define (exponentiation? x)
   (and (pair? x) (eq? (car x) '**)))
-
-(define (base x) (cadr x))
-
-(define (exponent x) (caddr x))
 
 (define (make-exponentiation base exponent)
   (cond ((= exponent 0) 1)
