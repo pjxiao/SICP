@@ -58,7 +58,7 @@
        (lambda (x y) (tag (div-rat x y))))
 
   (put 'make 'rational
-       (lambda (n d) (tag (make-rat n d)))
+       (lambda (n d) (tag (make-rat n d))))
   'done)
 
 
@@ -100,9 +100,41 @@
        (lambda (x y) (tag (make-from-real-imag x y))))
   (put 'make-from-mag-ang 'complex
        (lambda (r a) (tag (make-from-mag-ang r a))))
+  (put 'real-part '(complex) real-part)
+  (put 'imag-part '(complex) imag-part)
+  (put 'magnitude '(complex) magnitude)
+  (put 'angle '(complex) angle)
   'done)
 
 (define (make-complex-from-real-imag x y)
   ((get 'make-from-real-imag 'complex) x y))
 (define (make-complex-from-mag-ang r a)
   ((get 'make-from-mag-ang 'complex) r a))
+
+; 2.78
+(define (attach-tag type-tag contents)
+  (if (eq? type-tag 'scheme-number)
+    contents
+    (cons type-tag contents)
+    ))
+
+(define (type-tag datum)
+  (cond ((number? datum) 'scheme-number)
+        ((pair? datum) (car datum))
+        (else (error "Bad tagged datum -- TYPE-TAG" datum))))
+
+(define (contents datum)
+  (cond ((number? datum) datum)
+        ((pair? datum) (cdr datum))
+        (else (error "Bad tagged datum -- CONTENTS" datum))))
+
+(define (apply-generic op . args)
+  (let ((type-tags (map type-tag args)))
+    (let ((proc (get op type-tags)))
+      (if proc
+        (apply proc (map contents args))
+        (error
+          "No method for these types -- APPLY-GENERIC"
+          (list op type-tags))))))
+; /2.78
+
