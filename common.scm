@@ -113,6 +113,8 @@
   (define (equ?-rectangular x y)
     (and (eq? (real-part x) (real-part y))
          (eq? (imag-part x) (imag-part y))))
+  (define (=zero?-rectangular x)
+    (and (eq? (real-part x) 0) (eq? (imag-part x) 0)))
 
   ;; interfaces
   (define (tag x) (attach-tag 'rectangular x))
@@ -125,6 +127,7 @@
   (put 'make-from-mag-ang 'rectangular
        (lambda (r a) (tag (make-from-mag-ang r a))))
   (put 'equ? '(rectangular rectangular) equ?-rectangular)
+  (put '=zero? '(rectangular) =zero?-rectangular)
   'done)
 
 
@@ -144,6 +147,8 @@
   (define (equ?-polar x y)
     (and (eq? (magnitude x) (magnitude y))
          (eq? (angle x) (angle y))))
+  (define (=zero?-polar x)
+    (and (eq? (magnitude x) 0) (eq? (angle x) 0)))
 
    ;; interfaces
   (define (tag x) (attach-tag 'polar x))
@@ -156,6 +161,7 @@
   (put 'make-from-mag-ang 'polar
        (lambda (r a) (tag (make-from-mag-ang r a))))
   (put 'equ? '(polar polar) equ?-polar)
+  (put '=zero? '(polar) =zero?-polar)
   'done)
 
 (define (real-part z) (apply-generic 'real-part z))
