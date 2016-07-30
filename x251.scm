@@ -3,10 +3,12 @@
 (require "./common.scm")
 (import common)
 
-(define (add x y ) (apply-generic 'add x y))
-(define (sub x y ) (apply-generic 'sub x y))
-(define (mul x y ) (apply-generic 'mul x y))
-(define (div x y ) (apply-generic 'div x y))
+(define (add x y)  (apply-generic 'add x y))
+(define (sub x y)  (apply-generic 'sub x y))
+(define (mul x y)  (apply-generic 'mul x y))
+(define (div x y)  (apply-generic 'div x y))
+(define (equ? x y) (apply-generic 'equ? x y))
+(define (=zero? x) (apply-generic '=zero? x))
 
 (define (install-scheme-number-package)
   (define (tag x)
@@ -19,6 +21,10 @@
        (lambda (x y) (tag (* x y))))
   (put 'div '(scheme-number scheme-number)
        (lambda (x y) (tag (/ x y))))
+  (put 'equ? '(scheme-number scheme-number)
+       (lambda (x y) (eq? x y)))
+  (put '=zero? '(scheme-number)
+       (lambda (x) (eq? x 0)))
   (put 'make 'scheme-number
        (lambda (x) (tag x)))
   'done)
@@ -46,6 +52,10 @@
   (define (div-rat x y)
     (make-rat (* (numer x) (denom y))
               (* (denom x) (numer y))))
+  (define (equ?-rat x y)
+    (and (eq? (numer x) (numer y))
+         (eq? (denom x) (denom y))))
+  (define (=zero?-rat x) (eq? (numer x) 0))
 
   (define (tag x) (attach-tag 'rational x))
   (put 'add '(rational rational)
@@ -56,6 +66,8 @@
        (lambda (x y) (tag (mul-rat x y))))
   (put 'div '(rational rational)
        (lambda (x y) (tag (div-rat x y))))
+  (put 'equ? '(rational rational) equ?-rat)
+  (put '=zero? '(rational) =zero?-rat)
 
   (put 'make 'rational
        (lambda (n d) (tag (make-rat n d))))
@@ -63,7 +75,7 @@
 
 
 (define (make-rational n d)
-  ((get 'make 'ration) n d))
+  ((get 'make 'rational) n d))
 
 
 (define (install-complex-package)
@@ -104,6 +116,8 @@
   (put 'imag-part '(complex) imag-part)
   (put 'magnitude '(complex) magnitude)
   (put 'angle '(complex) angle)
+  (put 'equ? '(complex complex) equ?)
+  (put '=zero? '(complex) =zero?)
   'done)
 
 (define (make-complex-from-real-imag x y)
