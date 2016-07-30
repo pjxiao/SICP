@@ -110,6 +110,9 @@
     (atan (imag-part z) (real-part z)))
   (define (make-from-mag-ang r a)
     (cons (* r (cos a)) (* (sin a))))
+  (define (equ?-rectangular x y)
+    (and (eq? (real-part x) (real-part y))
+         (eq? (imag-part x) (imag-part y))))
 
   ;; interfaces
   (define (tag x) (attach-tag 'rectangular x))
@@ -121,6 +124,7 @@
        (lambda (x y) (tag (make-from-real-imag x y))))
   (put 'make-from-mag-ang 'rectangular
        (lambda (r a) (tag (make-from-mag-ang r a))))
+  (put 'equ? '(rectangular rectangular) equ?-rectangular)
   'done)
 
 
@@ -137,6 +141,9 @@
   (define (make-from-real-imag x y) 
     (cons (sqrt (+ (square x) (square y)))
           (atan y x)))
+  (define (equ?-polar x y)
+    (and (eq? (magnitude x) (magnitude y))
+         (eq? (angle x) (angle y))))
 
    ;; interfaces
   (define (tag x) (attach-tag 'polar x))
@@ -148,6 +155,7 @@
        (lambda (x y) (tag (make-from-real-imag x y))))
   (put 'make-from-mag-ang 'polar
        (lambda (r a) (tag (make-from-mag-ang r a))))
+  (put 'equ? '(polar polar) equ?-polar)
   'done)
 
 (define (real-part z) (apply-generic 'real-part z))
